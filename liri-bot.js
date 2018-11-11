@@ -1,19 +1,24 @@
 require("dotenv").config();
 
-var spotify = require("./keys"); // ????
-var request = require("request");
+const keys = require("./keys");
+// const Spotify = require("node-spotify-api");
+// const spotify = new Spotify("keys.spotify");
+const request = require("request");
+const moment = require("moment");
+moment().format();
+const fs = require("fs");
+
+// get user command
+const command = process.argv[2];
+// console.log(command);
+
+// get user input
+let userInput = process.argv.slice(3).join(" ");
 
 
-
-//  * ASSUMES USER SETUP HAS BEEN COMPLETED
-//  * (API KEYS ETC)
-
-console.log(process.env.SPOTIFY_ID);
-// get the user input
-const input = process.argv[2];
 
 // make a decision based on the command
-switch (input) {
+switch (command) {
   case "concert-this":
     concertThis();
     break;
@@ -32,33 +37,53 @@ switch (input) {
 }
 
 function spotifyThisSong() {
-    console.log("SPOTIFY THIS SONG: " + process.argv[3]);
-    var spotify = new Spotify(keys.spotify);
+  // console.log("SPOTIFY THIS SONG: " + userInput);
+
 }
 
 function concertThis() {
-    console.log("CONCERT THIS: " + process.argv.slice(3).join(" "));
-    // "https://rest.bandsintown.com/artists/" + artist + "/?app_id=codingbootcamp"
+  // console.log("CONCERT THIS: " + userInput);
+  if (userInput === undefined || userInput === null) {
+    userInput = "Kamasi Washington";
+  }
 
+  let URL =  "https://rest.bandsintown.com/artists/" + userInput + "/events?app_id=codingbootcamp";
+
+  request(URL, function(error, response, body) {
+    // Parse the body of the site
+    let concertBody = JSON.parse(body);
+    // console.log(concertBody[0]);
+
+    // If the request is successful (i.e. if the response status code is 200)
+    if (!error && response.statusCode === 200) {
+      console.log(`\n----------\nArtist: ${concertBody[0].lineup}\nVenue: ${concertBody[0].venue.name}\nLocation: ${concertBody[0].venue.city}, ${concertBody[0].venue.region}\nDate: ${moment(concertBody[0].datetime).format("MM/DD/YYYY")}\n`);
+    };
+    }
+  );
 }
 
 function movieThis() {
-  console.log("MOVIE THIS: " + process.argv[3]);
-  // Then run a request to the OMDB API with the movie specified
-request("http://www.omdbapi.com/?t=remember+the+titans&y=&plot=short&apikey=trilogy",
-function(error, response, body) {
-  console.log(response);
-  // If the request is successful (i.e. if the response status code is 200)
-  if (!error && response.statusCode === 200) {
-    // Parse the body of the site and recover just the imdbRating
-    // (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
-    console.log("The movie's rating is: " + JSON.parse(body).imdbRating);
-  }
-}
-);
+  if (userInput === undefined || userInput === null) {
+    userInput = "Mr. Nobody";
+  };
+  // console.log("MOVIE THIS: " + userInput);
+
+  let URL = "http://www.omdbapi.com/?t=" + userInput + "&y=&plot=short&apikey=trilogy"
+
+  // run a request to the OMDB API with the movie specified
+  request(URL,function(error, response, body) {
+    
+    // Parse the body of the site
+    let movieBody = JSON.parse(body);
+    // console.log(movieBody);
+
+      // If the request is successful (i.e. if the response status code is 200)
+      if (!error && response.statusCode === 200) {
+        console.log(`\n----------\nMovie Title: ${movieBody.Title}\nYear: ${movieBody.Year}\nIMDB Rating: ${movieBody.imdbRating}\nRotten Tomatoes Rating: ${movieBody.Ratings[1].Value}\nCountry: ${movieBody.Country}\nLanguage: ${movieBody.Language}\nPlot: ${movieBody.Plot}\nActors: ${movieBody.Actors}\n`);
+      }
+    }
+  );
 }
 function doWhatItSays() {
-  console.log("DO THIS: " + process.argv[3]);
+  // console.log("DO THIS: " + userInput);
 }
-
-
