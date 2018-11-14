@@ -36,9 +36,11 @@ switch (command) {
     break;
 }
 
+
+// search for song using node-spotify-api
 function spotifyThisSong() {
   // console.log("SPOTIFY THIS SONG: " + userInput);
-  if (userInput === undefined || userInput === null) {
+  if (userInput === undefined || userInput === null || userInput === "") {
     userInput = "Ace of Base The Sign";
   }
 
@@ -57,9 +59,11 @@ function spotifyThisSong() {
 });
 };
 
+
+// search for concert info using bandsintown api
 function concertThis() {
   // console.log("CONCERT THIS: " + userInput);
-  if (userInput === undefined || userInput === null) {
+  if (userInput === undefined || userInput === null || userInput === "") {
     userInput = "Kamasi Washington";
   }
 
@@ -78,8 +82,10 @@ function concertThis() {
   );
 };
 
+
+// search for movie info using omdb api
 function movieThis() {
-  if (userInput === undefined || userInput === null) {
+  if (userInput === undefined || userInput === null || userInput === "") {
     userInput = "Mr. Nobody";
   }
   // console.log("MOVIE THIS: " + userInput);
@@ -100,6 +106,8 @@ function movieThis() {
     });
   };
 
+
+// Using the fs Node package, LIRI will take the text inside of random.txt and then use it to call one of LIRI's commands.
   function doWhatItSays() {
     fs.readFile("random.txt", "utf8", function (error, data) {
       // console.log(data.split(","));
@@ -108,15 +116,15 @@ function movieThis() {
         return console.log(error);
       }
 
-      let dataArr = data.split(",");
-        userInput = dataArr[1];
+      let dataArray = data.split(",");
+        userInput = dataArray[1];
   
   
-        if (dataArr[0] === "spotify-this-song") {
+        if (dataArray[0] === "spotify-this-song") {
             spotifyThisSong();
-        } else if (dataArr[0] === "concert-this") {
+        } else if (dataArray[0] === "concert-this") {
             concertThis();
-        } else if (dataArr[0] === "movie-this") {
+        } else if (dataArray[0] === "movie-this") {
             movieThis();
         }
     });
