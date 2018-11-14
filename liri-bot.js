@@ -1,8 +1,8 @@
 require("dotenv").config();
 
-const keys = require("./keys");
-// const Spotify = require("node-spotify-api");
-// const spotify = new Spotify("keys.spotify");
+const keys = require("./keys.js");
+const Spotify = require("node-spotify-api");
+const spotify = new Spotify(keys.spotify);
 const request = require("request");
 const moment = require("moment");
 moment().format();
@@ -38,8 +38,24 @@ switch (command) {
 
 function spotifyThisSong() {
   // console.log("SPOTIFY THIS SONG: " + userInput);
+  if (userInput === undefined || userInput === null) {
+    userInput = "Ace of Base The Sign";
+  }
 
-}
+  spotify.search({ type: 'track', query: userInput }, function(err, data) {
+    // console.log(data.tracks.items[0]);
+
+    if (err) {
+      return console.log('Error occurred: ' + err);
+    }
+
+    let search = data.tracks.items[0];
+
+    // console.log(data.tracks.items[0].album.name)
+    console.log(`\n----------\nArtist: ${search.artists[0].name}\nSong: ${search.name}\nPreview link: ${search.preview_url}\nAlbum: ${search.album.name}\n`)
+
+});
+};
 
 function concertThis() {
   // console.log("CONCERT THIS: " + userInput);
@@ -60,12 +76,12 @@ function concertThis() {
     };
     }
   );
-}
+};
 
 function movieThis() {
   if (userInput === undefined || userInput === null) {
     userInput = "Mr. Nobody";
-  };
+  }
   // console.log("MOVIE THIS: " + userInput);
 
   let URL = "http://www.omdbapi.com/?t=" + userInput + "&y=&plot=short&apikey=trilogy"
@@ -81,9 +97,5 @@ function movieThis() {
       if (!error && response.statusCode === 200) {
         console.log(`\n----------\nMovie Title: ${movieBody.Title}\nYear: ${movieBody.Year}\nIMDB Rating: ${movieBody.imdbRating}\nRotten Tomatoes Rating: ${movieBody.Ratings[1].Value}\nCountry: ${movieBody.Country}\nLanguage: ${movieBody.Language}\nPlot: ${movieBody.Plot}\nActors: ${movieBody.Actors}\n`);
       }
-    }
-  );
-}
-function doWhatItSays() {
-  // console.log("DO THIS: " + userInput);
-}
+    });
+  };
