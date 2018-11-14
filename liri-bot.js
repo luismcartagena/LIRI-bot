@@ -99,3 +99,26 @@ function movieThis() {
       }
     });
   };
+
+  function doWhatItSays() {
+    fs.readFile("random.txt", "utf8", function (error, data) {
+      // console.log(data.split(","));
+
+      if (error) {
+        return console.log(error);
+      }
+
+      let dataArr = data.split(",");
+        userInput = dataArr[1];
+  
+  
+        if (dataArr[0] === "spotify-this-song") {
+            spotifyThisSong();
+        } else if (dataArr[0] === "concert-this") {
+            concertThis();
+        } else if (dataArr[0] === "movie-this") {
+            movieThis();
+        }
+    });
+   
+  };
